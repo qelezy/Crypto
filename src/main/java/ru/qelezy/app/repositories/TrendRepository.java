@@ -1,22 +1,10 @@
 package ru.qelezy.app.repositories;
 
-import ru.qelezy.app.entities.Trend;
-import jakarta.annotation.PostConstruct;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-
-import java.util.ArrayList;
-import java.util.List;
+import ru.qelezy.app.entities.Trend;
 
 @Repository
-public class TrendRepository {
-    private final List<Trend> trends = new ArrayList<>();
-    public List<Trend> findAll() {
-        return trends;
-    }
+public interface TrendRepository extends JpaRepository<Trend, Long> {
 
-    @PostConstruct
-    private void initialize() {
-        trends.add(new Trend("Bitcoin", "BTC", 23.0));
-        trends.add(new Trend("Bitcoin", "BTC", 23.0));
-    }
 }

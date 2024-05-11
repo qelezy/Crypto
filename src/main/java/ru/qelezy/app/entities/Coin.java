@@ -1,21 +1,54 @@
 package ru.qelezy.app.entities;
 
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+
 @Getter
 @Setter
 @AllArgsConstructor
+@NoArgsConstructor
+@Entity
+@Table(name = "coins")
 public class Coin {
-    String coinName;
-    String coinCode;
-    Double price;
-    Double oneHourChange;
-    Double twentyFourHoursChange;
-    Double sevenDaysChange;
-    Double marketCap;
-    Double volume;
-    List<Double> lastPrice;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(name = "coin_name")
+    private String coinName;
+
+    @Column(name = "coin_code")
+    private String coinCode;
+
+    private Double price;
+
+    @Column(name = "1h")
+    private Double oneHourChange;
+
+    @Column(name = "24h")
+    private Double twentyFourHoursChange;
+
+    @Column(name = "7d")
+    private Double sevenDaysChange;
+
+    @Column(name = "market_cap")
+    private Double marketCap;
+
+    private Double volume;
+
+    @Column(name = "last_price")
+    private List<Double> lastPrice;
+
+    @ManyToMany(cascade = CascadeType.ALL)
+    @JoinTable(name = "portfolio_coin",
+            joinColumns =  @JoinColumn(name="coin_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name="portfolio_id", referencedColumnName = "id"))
+    private Set<Portfolio> portfolios = new HashSet<Portfolio>();
 }
