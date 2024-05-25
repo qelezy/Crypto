@@ -2,12 +2,14 @@ package ru.qelezy.app.controllers;
 
 import org.jetbrains.annotations.NotNull;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.qelezy.app.entities.Coin;
 import ru.qelezy.app.repositories.CoinRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/coins")
@@ -21,27 +23,44 @@ public class CoinController {
     }
 
     @GetMapping("/{id}")
-    public Coin findById(@PathVariable Long id) {
-        return coinRepository.findById(id).orElseThrow(() -> new NullPointerException("Запись с id: " + id + "не найдена"));
+    public ResponseEntity<Object> findById(@PathVariable Long id) {
+        Optional<Coin> coinOptional = coinRepository.findById(id);
+        if (coinOptional.isPresent()) {
+            return ResponseEntity.status(HttpStatus.OK).body(coinOptional.get());
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Запись с id: " + id + " не найдена");
+        }
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public void add(@RequestBody Coin coin) {
+    public ResponseEntity<Object> add(@RequestBody Coin coin) {
         coinRepository.save(coin);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     @PutMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void update(@PathVariable Long id, @RequestBody @NotNull Coin newCoin) {
-        Coin existedCoin = coinRepository.findById(id).orElseThrow(() -> new NullPointerException("Запись с id: " + id + "не найдена"));
-        newCoin.setId(id);
-        coinRepository.save(newCoin);
+    public ResponseEntity<Object> update(@PathVariable Long id, @RequestBody @NotNull Coin newCoin) {
+        Optional<Coin> coinOptional = coinRepository.findById(id);
+        if (coinOptional.isPresent()) {
+            newCoin.setId(id);
+            coinRepository.save(newCoin);
+            return ResponseEntity.noContent().build();
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Запись с id: " + id + " не найдена");
+        }
     }
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteById(@PathVariable Long id) {
-        coinRepository.deleteById(id);
+    public ResponseEntity<Object> deleteById(@PathVariable Long id) {
+        Optional<Coin> coinOptional = coinRepository.findById(id);
+        if (coinOptional.isPresent()) {
+            coinRepository.deleteById(id);
+            return ResponseEntity.noContent().build();
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Запись с id: " + id + " не найдена");
+        }
     }
 }
