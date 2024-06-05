@@ -44,8 +44,14 @@ public class DealController {
     public ResponseEntity<Object> update(@PathVariable Long id, @RequestBody @NotNull Deal newDeal) {
         Optional<Deal> dealOptional = dealRepository.findById(id);
         if (dealOptional.isPresent()) {
-            newDeal.setId(id);
-            dealRepository.save(newDeal);
+            Deal existingDeal = dealOptional.get();
+            existingDeal.setDate(newDeal.getDate());
+            existingDeal.setType(newDeal.getType());
+            existingDeal.setPrice(newDeal.getPrice());
+            existingDeal.setVolume(newDeal.getVolume());
+            existingDeal.setCoinCode(newDeal.getCoinCode());
+            existingDeal.setCoinName(newDeal.getCoinName());
+            dealRepository.save(existingDeal);
             return ResponseEntity.noContent().build();
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Запись с id: " + id + " не найдена");

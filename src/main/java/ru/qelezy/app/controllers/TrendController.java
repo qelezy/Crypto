@@ -44,8 +44,9 @@ public class TrendController {
     public ResponseEntity<Object> update(@PathVariable Long id, @RequestBody @NotNull Trend newTrend) {
         Optional<Trend> trendOptional = trendRepository.findById(id);
         if (trendOptional.isPresent()) {
-            newTrend.setId(id);
-            trendRepository.save(newTrend);
+            Trend existingTrend = trendOptional.get();
+            existingTrend.setCoins(newTrend.getCoins());
+            trendRepository.save(existingTrend);
             return ResponseEntity.noContent().build();
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Запись с id: " + id + " не найдена");

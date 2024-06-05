@@ -44,8 +44,17 @@ public class CoinController {
     public ResponseEntity<Object> update(@PathVariable Long id, @RequestBody @NotNull Coin newCoin) {
         Optional<Coin> coinOptional = coinRepository.findById(id);
         if (coinOptional.isPresent()) {
-            newCoin.setId(id);
-            coinRepository.save(newCoin);
+            Coin existingCoin = coinOptional.get();
+            existingCoin.setCoinName(newCoin.getCoinName());
+            existingCoin.setCoinCode(newCoin.getCoinCode());
+            existingCoin.setPrice(newCoin.getPrice());
+            existingCoin.setOneHourChange(newCoin.getOneHourChange());
+            existingCoin.setTwentyFourHoursChange(newCoin.getTwentyFourHoursChange());
+            existingCoin.setSevenDaysChange(newCoin.getSevenDaysChange());
+            existingCoin.setMarketCap(newCoin.getMarketCap());
+            existingCoin.setVolume(newCoin.getVolume());
+            existingCoin.setLastPrice(newCoin.getLastPrice());
+            coinRepository.save(existingCoin);
             return ResponseEntity.noContent().build();
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Запись с id: " + id + " не найдена");

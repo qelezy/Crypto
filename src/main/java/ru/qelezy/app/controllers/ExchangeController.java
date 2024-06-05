@@ -44,8 +44,14 @@ public class ExchangeController {
     public ResponseEntity<Object> update(@PathVariable Long id, @RequestBody @NotNull Exchange newExchange) {
         Optional<Exchange> exchangeOptional = exchangeRepository.findById(id);
         if (exchangeOptional.isPresent()) {
-            newExchange.setId(id);
-            exchangeRepository.save(newExchange);
+            Exchange existingExchange = exchangeOptional.get();
+            existingExchange.setName(newExchange.getName());
+            existingExchange.setScore(newExchange.getScore());
+            existingExchange.setVolumeTwentyFourHours(newExchange.getVolumeTwentyFourHours());
+            existingExchange.setMarkets(newExchange.getMarkets());
+            existingExchange.setCoins(newExchange.getCoins());
+            existingExchange.setLastVolume(newExchange.getLastVolume());
+            exchangeRepository.save(existingExchange);
             return ResponseEntity.noContent().build();
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Запись с id: " + id + " не найдена");

@@ -44,8 +44,14 @@ public class PortfolioController {
     public ResponseEntity<Object> update(@PathVariable Long id, @RequestBody @NotNull Portfolio newPortfolio) {
         Optional<Portfolio> portfolioOptional = portfolioRepository.findById(id);
         if (portfolioOptional.isPresent()) {
-            newPortfolio.setId(id);
-            portfolioRepository.save(newPortfolio);
+            Portfolio existingPortfolio = portfolioOptional.get();
+            existingPortfolio.setCoins(newPortfolio.getCoins());
+            existingPortfolio.setDeals(newPortfolio.getDeals());
+            existingPortfolio.setProfileVolumeUSD(newPortfolio.getProfileVolumeUSD());
+            existingPortfolio.setProfileVolumeBTC(newPortfolio.getProfileVolumeBTC());
+            existingPortfolio.setCurrentVolumeUSD(newPortfolio.getCurrentVolumeUSD());
+            existingPortfolio.setCurrentVolumeBTC(newPortfolio.getCurrentVolumeBTC());
+            portfolioRepository.save(existingPortfolio);
             return ResponseEntity.noContent().build();
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Запись с id: " + id + " не найдена");
