@@ -1,0 +1,26 @@
+version: '3.2'
+
+volumes:
+  pg_crypto:
+
+services:
+  crypto-db:
+    image: postgres
+    restart: always
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=1234
+      - POSTGRES_DB=crypto
+    volumes:
+      - pg_crypto:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+  app:
+    restart: always
+    build: .
+    ports:
+      - "8080:8080"
+    depends_on:
+      - crypto-db
+    environment:
+      SPRING_DATASOURCE_URL: 'jdbc:postgresql://crypto-db:5432/crypto'
